@@ -68,3 +68,4 @@ def test_run_one_builds_fusion_request(monkeypatch: pytest.MonkeyPatch) -> None:
         "anthropic/claude-opus-4.8",
     ]
     assert body["tools"][0]["parameters"]["model"] == "anthropic/claude-opus-4.8"
+    assert body["tools"][0]["parameters"]["selection_strategy"] == "first_non_refusal"

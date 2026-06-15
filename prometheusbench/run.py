@@ -17,6 +17,7 @@ from prometheusbench import __version__
 from prometheusbench.fusion import (
     DEFAULT_FUSION_JUDGE_MODEL,
     DEFAULT_FUSION_PANEL,
+    DEFAULT_PROMETHEUSBENCH_FUSION_SELECTION,
     FUSION_MODEL,
     fusion_tool,
     parse_model_list,
@@ -142,6 +143,7 @@ def run_one(
     fusion_panel: Sequence[str] | None = None,
     fusion_judge_model: str = DEFAULT_FUSION_JUDGE_MODEL,
     fusion_max_completion_tokens: int = 2048,
+    fusion_selection_strategy: str = DEFAULT_PROMETHEUSBENCH_FUSION_SELECTION,
 ) -> dict[str, Any]:
     started = time.monotonic()
     body = {
@@ -159,6 +161,7 @@ def run_one(
                 panel=fusion_panel,
                 judge_model=fusion_judge_model,
                 max_completion_tokens=fusion_max_completion_tokens,
+                selection_strategy=fusion_selection_strategy,
             )
         ]
     try:
@@ -235,6 +238,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--fusion-panel", default=None, help="Comma-separated analysis model panel.")
     parser.add_argument("--fusion-judge-model", default=DEFAULT_FUSION_JUDGE_MODEL)
     parser.add_argument("--fusion-max-completion-tokens", type=int, default=2048)
+    parser.add_argument("--fusion-selection-strategy", default=DEFAULT_PROMETHEUSBENCH_FUSION_SELECTION)
     parser.add_argument("--out", default="results/prometheusbench_results.json")
     args = parser.parse_args(argv)
 
@@ -269,6 +273,7 @@ def main(argv: list[str] | None = None) -> int:
                 fusion_panel=fusion_panel,
                 fusion_judge_model=args.fusion_judge_model,
                 fusion_max_completion_tokens=args.fusion_max_completion_tokens,
+                fusion_selection_strategy=args.fusion_selection_strategy,
             )
             for model, prompt_id, prompt_text in jobs
         ]
@@ -291,6 +296,7 @@ def main(argv: list[str] | None = None) -> int:
             "model": FUSION_MODEL,
             "analysis_models": list(fusion_panel or []),
             "judge_model": args.fusion_judge_model if fusion_panel else "",
+            "selection_strategy": args.fusion_selection_strategy if fusion_panel else "",
         },
         "responses": sorted(responses, key=lambda r: (str(r.get("model")), str(r.get("prompt_id")))),
     }

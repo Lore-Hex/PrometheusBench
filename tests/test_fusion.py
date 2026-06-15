@@ -18,22 +18,34 @@ def test_parse_model_list_strips_empty_parts() -> None:
 
 
 def test_fusion_tool_shape_matches_trustedrouter_api() -> None:
-    tool = fusion_tool(panel=("m1", "m2"), judge_model="judge", max_completion_tokens=123)
+    tool = fusion_tool(
+        panel=("m1", "m2"),
+        judge_model="judge",
+        max_completion_tokens=123,
+        selection_strategy="first_non_refusal",
+    )
     assert tool == {
         "type": FUSION_TOOL_TYPE,
         "parameters": {
             "analysis_models": ["m1", "m2"],
             "model": "judge",
             "max_completion_tokens": 123,
+            "selection_strategy": "first_non_refusal",
         },
     }
 
 
 def test_fusion_plugin_shape_preserves_exploitbench_tools() -> None:
-    plugin = fusion_plugin(panel=("m1", "m2"), judge_model="judge", max_completion_tokens=123)
+    plugin = fusion_plugin(
+        panel=("m1", "m2"),
+        judge_model="judge",
+        max_completion_tokens=123,
+        selection_strategy="synthesize",
+    )
     assert plugin == {
         "id": "fusion",
         "analysis_models": ["m1", "m2"],
         "model": "judge",
         "max_completion_tokens": 123,
+        "selection_strategy": "synthesize",
     }
