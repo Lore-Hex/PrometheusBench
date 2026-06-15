@@ -12,10 +12,19 @@ import time
 import urllib.error
 import urllib.request
 import zipfile
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
+from prometheusbench.fusion import (
+    DEFAULT_FUSION_JUDGE_MODEL,
+    DEFAULT_FUSION_PANEL,
+    FUSION_MODEL,
+    fusion_tool,
+    parse_model_list,
+)
 
 DEFAULT_BASE_URL = "https://api.trustedrouter.com/v1"
 DEFAULT_MODELS = (
@@ -148,13 +157,24 @@ def call_model(
     messages: list[dict[str, str]],
     timeout: float,
     max_tokens: int,
+    fusion_panel: Sequence[str] | None = None,
+    fusion_judge_model: str = DEFAULT_FUSION_JUDGE_MODEL,
+    fusion_max_completion_tokens: int = 4096,
 ) -> tuple[str, dict[str, Any]]:
     body = {
-        "model": model,
+        "model": FUSION_MODEL if fusion_panel else model,
         "messages": messages,
         "temperature": 0,
         "max_tokens": max_tokens,
     }
+    if fusion_panel:
+        body["tools"] = [
+            fusion_tool(
+                panel=fusion_panel,
+                judge_model=fusion_judge_model,
+                max_completion_tokens=fusion_max_completion_tokens,
+            )
+        ]
     data = _json_post(
         base_url.rstrip("/") + "/chat/completions",
         headers={"Authorization": f"Bearer {api_key}"},
@@ -254,6 +274,9 @@ def solve_problem(
     max_turns: int,
     llm_timeout: float,
     command_timeout: float,
+    fusion_panel: Sequence[str] | None = None,
+    fusion_judge_model: str = DEFAULT_FUSION_JUDGE_MODEL,
+    fusion_max_completion_tokens: int = 4096,
 ) -> dict[str, Any]:
     started = time.monotonic()
     messages = [
@@ -294,6 +317,9 @@ def solve_problem(
                 messages=messages,
                 timeout=llm_timeout,
                 max_tokens=2048,
+                fusion_panel=fusion_panel,
+                fusion_judge_model=fusion_judge_model,
+                fusion_max_completion_tokens=fusion_max_completion_tokens,
             )
         except urllib.error.HTTPError as exc:
             error = f"http_{exc.code}: {exc.read().decode('utf-8', errors='replace')[:600]}"
@@ -385,19 +411,36 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Run a BioMysteryBench preview reproduction.")
     parser.add_argument("--base-url", default=DEFAULT_BASE_URL)
     parser.add_argument("--api-key", default=None)
-    parser.add_argument("--models", default=",".join(DEFAULT_MODELS))
+    parser.add_argument("--models", default=None)
     parser.add_argument("--work-root", default=".eval_work")
     parser.add_argument("--private-out", default=".eval_results_private/biomystery_preview_raw.json")
     parser.add_argument("--public-out", default="results/biomystery_preview_trustedrouter_2026-06-14.json")
     parser.add_argument("--max-turns", type=int, default=8)
     parser.add_argument("--llm-timeout", type=float, default=180)
     parser.add_argument("--command-timeout", type=float, default=30)
+    parser.add_argument("--problem-limit", type=int, default=None)
+    parser.add_argument("--fusion", action="store_true", help="Run through TrustedRouter Fusion.")
+    parser.add_argument("--fusion-panel", default=None, help="Comma-separated analysis model panel.")
+    parser.add_argument("--fusion-judge-model", default=DEFAULT_FUSION_JUDGE_MODEL)
+    parser.add_argument("--fusion-max-completion-tokens", type=int, default=4096)
     args = parser.parse_args(argv)
 
     api_key = _api_key_from_env(args.api_key)
-    models = [part.strip() for part in args.models.split(",") if part.strip()]
+    if args.models:
+        models = [part.strip() for part in args.models.split(",") if part.strip()]
+    elif args.fusion:
+        models = [FUSION_MODEL]
+    else:
+        models = list(DEFAULT_MODELS)
+    fusion_panel = (
+        parse_model_list(args.fusion_panel, default=DEFAULT_FUSION_PANEL)
+        if args.fusion
+        else None
+    )
     dataset_dir = ensure_preview_dataset(Path(args.work_root))
     problems = load_problems(dataset_dir)
+    if args.problem_limit:
+        problems = problems[: args.problem_limit]
     raw_results = []
     for model in models:
         for problem in problems:
@@ -417,6 +460,9 @@ def main(argv: list[str] | None = None) -> int:
                     max_turns=args.max_turns,
                     llm_timeout=args.llm_timeout,
                     command_timeout=args.command_timeout,
+                    fusion_panel=fusion_panel,
+                    fusion_judge_model=args.fusion_judge_model,
+                    fusion_max_completion_tokens=args.fusion_max_completion_tokens,
                 )
             )
 
@@ -425,6 +471,12 @@ def main(argv: list[str] | None = None) -> int:
         "benchmark": "BioMysteryBench-preview reproduction",
         "created_at": created_at,
         "models": models,
+        "fusion": {
+            "enabled": bool(fusion_panel),
+            "model": FUSION_MODEL,
+            "analysis_models": list(fusion_panel or []),
+            "judge_model": args.fusion_judge_model if fusion_panel else "",
+        },
         "results": raw_results,
     }
     private_out = Path(args.private_out)
@@ -436,6 +488,12 @@ def main(argv: list[str] | None = None) -> int:
         "benchmark": "BioMysteryBench-preview reproduction",
         "created_at": created_at,
         "models": models,
+        "fusion": {
+            "enabled": bool(fusion_panel),
+            "model": FUSION_MODEL,
+            "analysis_models": list(fusion_panel or []),
+            "judge_model": args.fusion_judge_model if fusion_panel else "",
+        },
         "problems": [
             {"id": problem.id, "human_solvable": problem.human_solvable}
             for problem in problems

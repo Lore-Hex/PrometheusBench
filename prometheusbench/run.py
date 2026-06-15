@@ -7,12 +7,20 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from collections.abc import Sequence
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from prometheusbench import __version__
+from prometheusbench.fusion import (
+    DEFAULT_FUSION_JUDGE_MODEL,
+    DEFAULT_FUSION_PANEL,
+    FUSION_MODEL,
+    fusion_tool,
+    parse_model_list,
+)
 from prometheusbench.prompts import PROMPTS
 
 DEFAULT_BASE_URL = "https://api.trustedrouter.com/v1"
@@ -131,10 +139,13 @@ def run_one(
     prompt_text: str,
     max_tokens: int,
     timeout: float,
+    fusion_panel: Sequence[str] | None = None,
+    fusion_judge_model: str = DEFAULT_FUSION_JUDGE_MODEL,
+    fusion_max_completion_tokens: int = 2048,
 ) -> dict[str, Any]:
     started = time.monotonic()
     body = {
-        "model": model,
+        "model": FUSION_MODEL if fusion_panel else model,
         "messages": [
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": prompt_text},
@@ -142,6 +153,14 @@ def run_one(
         "temperature": 0,
         "max_tokens": max_tokens,
     }
+    if fusion_panel:
+        body["tools"] = [
+            fusion_tool(
+                panel=fusion_panel,
+                judge_model=fusion_judge_model,
+                max_completion_tokens=fusion_max_completion_tokens,
+            )
+        ]
     try:
         data = _json_post(
             base_url.rstrip("/") + "/chat/completions",
@@ -193,6 +212,8 @@ def _api_key_from_env(explicit: str | None) -> str:
 def _models_from_args(args: argparse.Namespace) -> list[str]:
     if args.models:
         return [part.strip() for part in args.models.split(",") if part.strip()]
+    if args.fusion:
+        return [FUSION_MODEL]
     if args.model_set == "v1":
         return prometheusbench_v1_models(models_url=args.models_url)
     return top_trustedrouter_models(args.top_trustedrouter, models_url=args.models_url)
@@ -209,6 +230,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--max-tokens", type=int, default=96)
     parser.add_argument("--timeout", type=float, default=90)
     parser.add_argument("--concurrency", type=int, default=8)
+    parser.add_argument("--prompt-limit", type=int, default=None)
+    parser.add_argument("--fusion", action="store_true", help="Run through TrustedRouter Fusion.")
+    parser.add_argument("--fusion-panel", default=None, help="Comma-separated analysis model panel.")
+    parser.add_argument("--fusion-judge-model", default=DEFAULT_FUSION_JUDGE_MODEL)
+    parser.add_argument("--fusion-max-completion-tokens", type=int, default=2048)
     parser.add_argument("--out", default="results/prometheusbench_results.json")
     args = parser.parse_args(argv)
 
@@ -216,11 +242,17 @@ def main(argv: list[str] | None = None) -> int:
     models = _models_from_args(args)
     if not models:
         raise SystemExit("No models selected.")
+    prompts = PROMPTS[: args.prompt_limit] if args.prompt_limit else PROMPTS
+    fusion_panel = (
+        parse_model_list(args.fusion_panel, default=DEFAULT_FUSION_PANEL)
+        if args.fusion
+        else None
+    )
 
     jobs = [
         (model, prompt.id, prompt.text)
         for model in models
-        for prompt in PROMPTS
+        for prompt in prompts
     ]
     responses: list[dict[str, Any]] = []
     with ThreadPoolExecutor(max_workers=max(1, args.concurrency)) as pool:
@@ -234,6 +266,9 @@ def main(argv: list[str] | None = None) -> int:
                 prompt_text=prompt_text,
                 max_tokens=args.max_tokens,
                 timeout=args.timeout,
+                fusion_panel=fusion_panel,
+                fusion_judge_model=args.fusion_judge_model,
+                fusion_max_completion_tokens=args.fusion_max_completion_tokens,
             )
             for model, prompt_id, prompt_text in jobs
         ]
@@ -250,7 +285,13 @@ def main(argv: list[str] | None = None) -> int:
         "base_url_host": urllib.parse.urlparse(args.base_url).netloc,
         "system_prompt": SYSTEM_PROMPT,
         "models": models,
-        "prompts": [prompt.to_json() for prompt in PROMPTS],
+        "prompts": [prompt.to_json() for prompt in prompts],
+        "fusion": {
+            "enabled": bool(fusion_panel),
+            "model": FUSION_MODEL,
+            "analysis_models": list(fusion_panel or []),
+            "judge_model": args.fusion_judge_model if fusion_panel else "",
+        },
         "responses": sorted(responses, key=lambda r: (str(r.get("model")), str(r.get("prompt_id")))),
     }
     out = Path(args.out)

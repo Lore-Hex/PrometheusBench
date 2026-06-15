@@ -1,14 +1,19 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
+
+import pytest
 
 from prometheusbench.biomystery_preview import (
+    call_model,
     expected_answers,
     grade_answer,
     parse_action,
     public_summary,
     safe_run_command,
 )
+from prometheusbench.fusion import FUSION_MODEL, FUSION_TOOL_TYPE
 
 
 def test_parse_action_accepts_json_command() -> None:
@@ -119,3 +124,41 @@ def test_safe_run_command_truncates_large_output(tmp_path: Path) -> None:
     assert returncode == 0
     assert "...[truncated]..." in output
     assert len(output) < 140
+
+
+def test_call_model_builds_fusion_request(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured: dict[str, Any] = {}
+
+    def fake_post(
+        url: str,
+        *,
+        headers: dict[str, str],
+        body: dict[str, Any],
+        timeout: float,
+    ) -> dict[str, Any]:
+        captured.update({"url": url, "headers": headers, "body": body, "timeout": timeout})
+        return {"choices": [{"message": {"content": "{\"final\":\"ok\"}"}}], "usage": {"total_tokens": 5}}
+
+    monkeypatch.setattr("prometheusbench.biomystery_preview._json_post", fake_post)
+
+    text, usage = call_model(
+        base_url="https://api.trustedrouter.com/v1",
+        api_key="sk-test",
+        model="trustedrouter/fusion",
+        messages=[{"role": "user", "content": "test"}],
+        timeout=10,
+        max_tokens=256,
+        fusion_panel=("openai/gpt-5.5", "anthropic/claude-opus-4.8"),
+        fusion_judge_model="anthropic/claude-opus-4.8",
+        fusion_max_completion_tokens=4096,
+    )
+
+    body = captured["body"]
+    assert text == "{\"final\":\"ok\"}"
+    assert usage == {"total_tokens": 5}
+    assert body["model"] == FUSION_MODEL
+    assert body["tools"][0]["type"] == FUSION_TOOL_TYPE
+    assert body["tools"][0]["parameters"]["analysis_models"] == [
+        "openai/gpt-5.5",
+        "anthropic/claude-opus-4.8",
+    ]
