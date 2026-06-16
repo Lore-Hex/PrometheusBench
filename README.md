@@ -121,17 +121,19 @@ Raw result JSON is ignored by git by default because it contains model outputs.
 Publish summary tables and charts unless you explicitly intend to publish raw
 responses.
 
-BioMysteryBench preview reproduction:
+### BioMysteryBench (capability eval)
 
-```bash
-export PROMETHEUSBENCH_API_KEY="sk-..."
-uv run --with huggingface_hub python -m prometheusbench.biomystery_preview \
-  --models deepseek/deepseek-v4-pro,openai/gpt-5.5,moonshotai/kimi-k2.6,google/gemini-3.1-pro-preview,google/gemini-3-flash-preview
-```
+The BioMysteryBench bioinformatics-*capability* harness — a Dockerized tool
+container, local NCBI BLAST databases, and a local-`claude` self-solve mode —
+now lives in its own repository:
 
-The runner writes raw local transcripts under `.eval_results_private/` and a
-sanitized public aggregate under `results/`. Both paths are ignored by git.
-Do not publish BioMysteryBench answer rubrics or model work traces.
+**→ [Lore-Hex/prometheus-biomysterybench](https://github.com/Lore-Hex/prometheus-biomysterybench)**
+
+It runs the public preview locally: the model is dropped into a container of
+real biological data and graded on its final answer (e.g. *"what organism is
+this crystal structure?"*). PrometheusBench (this repo) stays focused on the
+short-prompt *refusal/permissiveness* benchmark; the two are companions —
+permissiveness here, capability there.
 
 ## Prompt Design
 
@@ -220,26 +222,10 @@ Haiku calibration, run on 2026-06-14:
 - This matches the main v1 snapshot's Haiku row exactly, which is a useful
   sanity check that the refusal runner is stable across repeated runs.
 
-BioMysteryBench preview reproduction, run on 2026-06-14:
-
-- Public preview only: 5 tasks, not the 99-task full benchmark.
-- Harness: local file-inspection loop, 8 model turns per task, no published raw
-  transcripts, no published answer rubrics.
-- Total TrustedRouter usage for this preview run: 358,042 tokens.
-- Haiku calibration usage: 201,422 tokens. It hit the same 8-turn cap on all
-  five preview tasks, scoring 0/5.
-
-| Model | BioMystery preview score | Human-solvable | Human-difficult | Completed | Errors |
-|---|---:|---:|---:|---:|---:|
-| `moonshotai/kimi-k2.6` | 1/5 | 0/3 | 1/2 | 2/5 | 3 |
-| `deepseek/deepseek-v4-pro` | 1/5 | 0/3 | 1/2 | 1/5 | 4 |
-| `anthropic/claude-haiku-4.5` | 0/5 | 0/3 | 0/2 | 0/5 | 5 |
-| `google/gemini-3-flash-preview` | 0/5 | 0/3 | 0/2 | 2/5 | 3 |
-| `google/gemini-3.1-pro-preview` | 0/5 | 0/3 | 0/2 | 1/5 | 4 |
-| `openai/gpt-5.5` | 0/5 | 0/3 | 0/2 | 0/5 | 5 |
-
-Most BioMystery preview errors in this run were bounded `max_turns_exceeded`
-outcomes. GPT-5.5 returned API failures for all five preview tasks in this run.
+BioMysteryBench preview reproductions (including a local Opus 4.8 self-solve)
+have moved to
+[Lore-Hex/prometheus-biomysterybench](https://github.com/Lore-Hex/prometheus-biomysterybench);
+see its `RESULTS.md` for current numbers and harness notes.
 
 ExploitBench sample-stack smoke, run on 2026-06-14:
 

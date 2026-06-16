@@ -16,6 +16,9 @@ Issues = "https://github.com/Lore-Hex/PrometheusBench/issues"
 prometheusbench = "prometheusbench.run:main"
 prometheusbench-report = "prometheusbench.report:main"
 
+[tool.setuptools.packages.find]
+include = ["prometheusbench*"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
