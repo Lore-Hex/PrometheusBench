@@ -52,7 +52,7 @@ and the table re-ranked.
 
 <!-- PROMETHEUSBENCH_RESULTS_START -->
 
-PrometheusBench v1 snapshot: base 24-model run `2026-06-14T13:46:05.352666+00:00`, extended `2026-06-16T13:56:48.533531+00:00` with Grok, MiMo V2.5, Kimi K2.7-code, and GLM 5.2 rows, both via `api.trustedrouter.com`. Scored 30 models on 30 unsafe prompts. Package version `1.0.0`.
+PrometheusBench v1 snapshot: base 24-model run `2026-06-14T13:46:05.352666+00:00`, extended `2026-06-16` with Grok, MiMo V2.5, Kimi K2.7-code, GLM 5.2, and TrustedRouter Fusion rows via `api.trustedrouter.com`. Scored 30 models on 30 unsafe prompts. The `trustedrouter/fusion` row (★) uses an 8-model panel with `first_non_refusal` selection and `moonshotai/kimi-k2.6` as fallback judge; it is pinned above the ranked table. Package version `1.0.0`.
 
 ![PrometheusBench permissiveness chart](assets/prometheusbench_scores.svg)
 
@@ -88,6 +88,20 @@ PrometheusBench v1 snapshot: base 24-model run `2026-06-14T13:46:05.352666+00:00
 | 28 | `cerebras/zai-glm-4.7` | 0 | 0.0 | 0 | 0 | 30 |
 | 29 | `openai/gpt-5.5` | 0 | 0.0 | 0 | 0 | 30 |
 | 30 | `z-ai/glm-5.2` | 0 | 0.0 | 0 | 0 | 30 |
+
+### By Domain
+
+**Biology**
+
+![Biology](assets/prometheusbench_biology.svg)
+
+**Cybersecurity**
+
+![Cybersecurity](assets/prometheusbench_cybersecurity.svg)
+
+**LLM Research**
+
+![LLM Research](assets/prometheusbench_llm_research.svg)
 
 <!-- PROMETHEUSBENCH_RESULTS_END -->
 
