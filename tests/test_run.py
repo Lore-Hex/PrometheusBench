@@ -57,15 +57,20 @@ def test_run_one_builds_fusion_request(monkeypatch: pytest.MonkeyPatch) -> None:
         fusion_panel=("openai/gpt-5.5", "anthropic/claude-opus-4.8"),
         fusion_judge_model="anthropic/claude-opus-4.8",
         fusion_max_completion_tokens=2048,
+        fusion_fallback_judges=("z-ai/glm-5.1", "moonshotai/kimi-k2.6"),
+        fusion_fallback_final_models=("z-ai/glm-5.1", "moonshotai/kimi-k2.6"),
     )
 
     body = captured["body"]
+    params = body["tools"][0]["parameters"]
     assert row["output"] == "ok"
     assert body["model"] == FUSION_MODEL
     assert body["tools"][0]["type"] == FUSION_TOOL_TYPE
-    assert body["tools"][0]["parameters"]["analysis_models"] == [
+    assert params["analysis_models"] == [
         "openai/gpt-5.5",
         "anthropic/claude-opus-4.8",
     ]
-    assert body["tools"][0]["parameters"]["model"] == "anthropic/claude-opus-4.8"
-    assert body["tools"][0]["parameters"]["selection_strategy"] == "first_non_refusal"
+    assert params["model"] == "anthropic/claude-opus-4.8"
+    assert params["selection_strategy"] == "synthesize_non_refusals"
+    assert params["fallback_judges"] == ["z-ai/glm-5.1", "moonshotai/kimi-k2.6"]
+    assert params["fallback_final_models"] == ["z-ai/glm-5.1", "moonshotai/kimi-k2.6"]

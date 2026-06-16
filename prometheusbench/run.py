@@ -15,6 +15,7 @@ from typing import Any
 
 from prometheusbench import __version__
 from prometheusbench.fusion import (
+    DEFAULT_FUSION_FALLBACK_JUDGES,
     DEFAULT_FUSION_JUDGE_MODEL,
     DEFAULT_FUSION_PANEL,
     DEFAULT_PROMETHEUSBENCH_FUSION_SELECTION,
@@ -149,6 +150,8 @@ def run_one(
     fusion_judge_model: str = DEFAULT_FUSION_JUDGE_MODEL,
     fusion_max_completion_tokens: int = 2048,
     fusion_selection_strategy: str = DEFAULT_PROMETHEUSBENCH_FUSION_SELECTION,
+    fusion_fallback_judges: Sequence[str] | None = None,
+    fusion_fallback_final_models: Sequence[str] | None = None,
 ) -> dict[str, Any]:
     started = time.monotonic()
     body = {
@@ -167,6 +170,8 @@ def run_one(
                 judge_model=fusion_judge_model,
                 max_completion_tokens=fusion_max_completion_tokens,
                 selection_strategy=fusion_selection_strategy,
+                fallback_judges=fusion_fallback_judges,
+                fallback_final_models=fusion_fallback_final_models,
             )
         ]
     try:
@@ -244,6 +249,19 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--fusion-judge-model", default=DEFAULT_FUSION_JUDGE_MODEL)
     parser.add_argument("--fusion-max-completion-tokens", type=int, default=2048)
     parser.add_argument("--fusion-selection-strategy", default=DEFAULT_PROMETHEUSBENCH_FUSION_SELECTION)
+    parser.add_argument(
+        "--fusion-fallback-judges",
+        default=None,
+        help=(
+            "Comma-separated fallback judge chain. Defaults to the built-in chain "
+            "when --fusion is set; pass 'none' to disable."
+        ),
+    )
+    parser.add_argument(
+        "--fusion-fallback-final-models",
+        default=None,
+        help="Comma-separated fallback synthesizer chain (defaults to the judge chain).",
+    )
     parser.add_argument("--out", default="results/prometheusbench_results.json")
     args = parser.parse_args(argv)
 
@@ -257,6 +275,16 @@ def main(argv: list[str] | None = None) -> int:
         if args.fusion
         else None
     )
+    fusion_fallback_judges: tuple[str, ...] | None = None
+    fusion_fallback_final_models: tuple[str, ...] | None = None
+    if args.fusion and (args.fusion_fallback_judges or "").strip().lower() != "none":
+        fusion_fallback_judges = parse_model_list(
+            args.fusion_fallback_judges, default=DEFAULT_FUSION_FALLBACK_JUDGES
+        )
+        # The synthesizer falls back through the same chain unless overridden.
+        fusion_fallback_final_models = parse_model_list(
+            args.fusion_fallback_final_models, default=fusion_fallback_judges
+        )
 
     jobs = [
         (model, prompt.id, prompt.text)
@@ -279,6 +307,8 @@ def main(argv: list[str] | None = None) -> int:
                 fusion_judge_model=args.fusion_judge_model,
                 fusion_max_completion_tokens=args.fusion_max_completion_tokens,
                 fusion_selection_strategy=args.fusion_selection_strategy,
+                fusion_fallback_judges=fusion_fallback_judges,
+                fusion_fallback_final_models=fusion_fallback_final_models,
             )
             for model, prompt_id, prompt_text in jobs
         ]
@@ -302,6 +332,8 @@ def main(argv: list[str] | None = None) -> int:
             "analysis_models": list(fusion_panel or []),
             "judge_model": args.fusion_judge_model if fusion_panel else "",
             "selection_strategy": args.fusion_selection_strategy if fusion_panel else "",
+            "fallback_judges": list(fusion_fallback_judges or []),
+            "fallback_final_models": list(fusion_fallback_final_models or []),
         },
         "responses": sorted(responses, key=lambda r: (str(r.get("model")), str(r.get("prompt_id")))),
     }

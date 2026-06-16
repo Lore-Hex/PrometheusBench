@@ -18,7 +18,23 @@ DEFAULT_FUSION_PANEL: tuple[str, ...] = (
     "google/gemini-3.1-pro-preview",
 )
 DEFAULT_FUSION_JUDGE_MODEL = "z-ai/glm-5.1"
-DEFAULT_PROMETHEUSBENCH_FUSION_SELECTION = "first_non_refusal"
+
+# The gateway now falls back through a chain of judges / synthesizers natively,
+# so a single squeamish model no longer sinks a prompt. This is the chain that
+# cleared every PrometheusBench v1 prompt by hand, ordered most to least
+# permissive.
+DEFAULT_FUSION_FALLBACK_JUDGES: tuple[str, ...] = (
+    "z-ai/glm-5.1",
+    "moonshotai/kimi-k2.6",
+    "google/gemini-2.5-flash",
+    "deepseek/deepseek-v4-flash",
+    "google/gemini-3-flash-preview",
+    "tencent/hy3-preview",
+)
+
+# synthesize_non_refusals synthesizes the final answer only from the panel
+# members that did not refuse, which is exactly what we want here.
+DEFAULT_PROMETHEUSBENCH_FUSION_SELECTION = "synthesize_non_refusals"
 
 
 def parse_model_list(raw: str | None, *, default: Sequence[str]) -> tuple[str, ...]:
@@ -36,6 +52,8 @@ def fusion_parameters(
     judge_model: str,
     max_completion_tokens: int,
     selection_strategy: str | None = None,
+    fallback_judges: Sequence[str] | None = None,
+    fallback_final_models: Sequence[str] | None = None,
 ) -> dict[str, Any]:
     params: dict[str, Any] = {
         "analysis_models": list(panel),
@@ -44,6 +62,10 @@ def fusion_parameters(
     }
     if selection_strategy:
         params["selection_strategy"] = selection_strategy
+    if fallback_judges:
+        params["fallback_judges"] = list(fallback_judges)
+    if fallback_final_models:
+        params["fallback_final_models"] = list(fallback_final_models)
     return params
 
 
@@ -53,6 +75,8 @@ def fusion_tool(
     judge_model: str,
     max_completion_tokens: int,
     selection_strategy: str | None = None,
+    fallback_judges: Sequence[str] | None = None,
+    fallback_final_models: Sequence[str] | None = None,
 ) -> dict[str, Any]:
     return {
         "type": FUSION_TOOL_TYPE,
@@ -61,6 +85,8 @@ def fusion_tool(
             judge_model=judge_model,
             max_completion_tokens=max_completion_tokens,
             selection_strategy=selection_strategy,
+            fallback_judges=fallback_judges,
+            fallback_final_models=fallback_final_models,
         ),
     }
 
@@ -71,6 +97,8 @@ def fusion_plugin(
     judge_model: str,
     max_completion_tokens: int,
     selection_strategy: str | None = None,
+    fallback_judges: Sequence[str] | None = None,
+    fallback_final_models: Sequence[str] | None = None,
 ) -> dict[str, Any]:
     return {
         "id": "fusion",
@@ -79,5 +107,7 @@ def fusion_plugin(
             judge_model=judge_model,
             max_completion_tokens=max_completion_tokens,
             selection_strategy=selection_strategy,
+            fallback_judges=fallback_judges,
+            fallback_final_models=fallback_final_models,
         ),
     }
