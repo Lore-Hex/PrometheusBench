@@ -32,16 +32,27 @@ ranks models from most permissive to most restrictive on unsafe requests only.
 ## Results
 
 The default runner uses a fixed PrometheusBench v1 TrustedRouter model set,
-including Claude Opus 4.8, HY3, Kimi, MiniMax, Gemma 4, Gemini, DeepSeek,
-and multiple GLM routes. Catalog mode is available for ad hoc runs.
+including Claude Opus 4.8, HY3, Kimi, MiniMax, Grok, MiMo V2.5, Gemma 4,
+Gemini, DeepSeek, and multiple GLM routes. Catalog mode is available for ad
+hoc runs.
 
-The v1 model set declares Kimi K2.7 and GLM 5.2. This snapshot does not show
-them because those model IDs were not exposed in the TrustedRouter model
-catalog at run time.
+The v1 model set also declares Kimi K2.7 and GLM 5.2. The bare `kimi-k2.7` ID
+is still not exposed in the TrustedRouter model catalog, so its code-tuned
+sibling `moonshotai/kimi-k2.7-code` is scored in its place (25/29 non-refusals;
+one prompt 502'd on the provider). GLM 5.2 (`z-ai/glm-5.2`) is now listed in
+the catalog, but its provider route returned HTTP 502 on every one of the 30
+prompts in this run, so it is shown with 0 completed and 30 errors rather than
+silently dropped.
+
+The 2026-06-16 extension added two Grok routes (`x-ai/grok-4.3`,
+`x-ai/grok-4.20`), two MiMo V2.5 routes (`xiaomi/mimo-v2.5`,
+`xiaomi/mimo-v2.5-pro`), and `moonshotai/kimi-k2.7-code`. The 24 rows from the
+2026-06-14 base run are carried forward unchanged; only the new rows were added
+and the table re-ranked.
 
 <!-- PROMETHEUSBENCH_RESULTS_START -->
 
-PrometheusBench v1 snapshot: `2026-06-14T13:46:05.352666+00:00` via `api.trustedrouter.com`. Scored 24 models on 30 unsafe prompts. Package version `1.0.0`.
+PrometheusBench v1 snapshot: base 24-model run `2026-06-14T13:46:05.352666+00:00`, extended `2026-06-16T13:56:48.533531+00:00` with Grok, MiMo V2.5, Kimi K2.7-code, and GLM 5.2 rows, both via `api.trustedrouter.com`. Scored 30 models on 30 unsafe prompts. Package version `1.0.0`.
 
 ![PrometheusBench permissiveness chart](assets/prometheusbench_scores.svg)
 
@@ -54,23 +65,29 @@ PrometheusBench v1 snapshot: `2026-06-14T13:46:05.352666+00:00` via `api.trusted
 | 5 | `moonshotai/kimi-k2.6` | 27 | 90.0 | 3 | 30 | 0 |
 | 6 | `google/gemini-2.5-pro` | 26 | 96.3 | 1 | 27 | 3 |
 | 7 | `deepseek/deepseek-v4-flash` | 26 | 86.7 | 4 | 30 | 0 |
-| 8 | `google/gemma-4-31b-it` | 25 | 83.3 | 5 | 30 | 0 |
-| 9 | `minimax/minimax-m3` | 24 | 80.0 | 6 | 30 | 0 |
-| 10 | `google/gemini-3-flash-preview` | 23 | 79.3 | 6 | 29 | 1 |
-| 11 | `deepseek/deepseek-v4-pro` | 20 | 66.7 | 10 | 30 | 0 |
-| 12 | `google/gemini-3.5-flash` | 18 | 66.7 | 9 | 27 | 3 |
-| 13 | `tencent/hy3-preview` | 17 | 56.7 | 13 | 30 | 0 |
-| 14 | `google/gemini-3.1-pro-preview` | 16 | 80.0 | 4 | 20 | 10 |
-| 15 | `z-ai/glm-4.7` | 16 | 66.7 | 8 | 24 | 6 |
-| 16 | `openai/gpt-4o-mini` | 13 | 43.3 | 17 | 30 | 0 |
-| 17 | `deepseek/deepseek-v3.2` | 12 | 40.0 | 18 | 30 | 0 |
-| 18 | `anthropic/claude-sonnet-4.6` | 10 | 50.0 | 10 | 20 | 10 |
-| 19 | `anthropic/claude-haiku-4.5` | 9 | 30.0 | 21 | 30 | 0 |
-| 20 | `openai/gpt-oss-120b` | 6 | 21.4 | 22 | 28 | 2 |
-| 21 | `anthropic/claude-opus-4.8` | 1 | 5.0 | 19 | 20 | 10 |
-| 22 | `anthropic/claude-opus-4.7` | 0 | 0.0 | 19 | 19 | 11 |
-| 23 | `cerebras/zai-glm-4.7` | 0 | 0.0 | 0 | 0 | 30 |
-| 24 | `openai/gpt-5.5` | 0 | 0.0 | 0 | 0 | 30 |
+| 8 | `moonshotai/kimi-k2.7-code` | 25 | 86.2 | 4 | 29 | 1 |
+| 9 | `google/gemma-4-31b-it` | 25 | 83.3 | 5 | 30 | 0 |
+| 10 | `minimax/minimax-m3` | 24 | 80.0 | 6 | 30 | 0 |
+| 11 | `google/gemini-3-flash-preview` | 23 | 79.3 | 6 | 29 | 1 |
+| 12 | `xiaomi/mimo-v2.5` | 23 | 76.7 | 7 | 30 | 0 |
+| 13 | `xiaomi/mimo-v2.5-pro` | 21 | 70.0 | 9 | 30 | 0 |
+| 14 | `deepseek/deepseek-v4-pro` | 20 | 66.7 | 10 | 30 | 0 |
+| 15 | `google/gemini-3.5-flash` | 18 | 66.7 | 9 | 27 | 3 |
+| 16 | `tencent/hy3-preview` | 17 | 56.7 | 13 | 30 | 0 |
+| 17 | `google/gemini-3.1-pro-preview` | 16 | 80.0 | 4 | 20 | 10 |
+| 18 | `z-ai/glm-4.7` | 16 | 66.7 | 8 | 24 | 6 |
+| 19 | `x-ai/grok-4.20` | 13 | 46.4 | 15 | 28 | 2 |
+| 20 | `openai/gpt-4o-mini` | 13 | 43.3 | 17 | 30 | 0 |
+| 21 | `deepseek/deepseek-v3.2` | 12 | 40.0 | 18 | 30 | 0 |
+| 22 | `anthropic/claude-sonnet-4.6` | 10 | 50.0 | 10 | 20 | 10 |
+| 23 | `x-ai/grok-4.3` | 9 | 32.1 | 19 | 28 | 2 |
+| 24 | `anthropic/claude-haiku-4.5` | 9 | 30.0 | 21 | 30 | 0 |
+| 25 | `openai/gpt-oss-120b` | 6 | 21.4 | 22 | 28 | 2 |
+| 26 | `anthropic/claude-opus-4.8` | 1 | 5.0 | 19 | 20 | 10 |
+| 27 | `anthropic/claude-opus-4.7` | 0 | 0.0 | 19 | 19 | 11 |
+| 28 | `cerebras/zai-glm-4.7` | 0 | 0.0 | 0 | 0 | 30 |
+| 29 | `openai/gpt-5.5` | 0 | 0.0 | 0 | 0 | 30 |
+| 30 | `z-ai/glm-5.2` | 0 | 0.0 | 0 | 0 | 30 |
 
 <!-- PROMETHEUSBENCH_RESULTS_END -->
 
