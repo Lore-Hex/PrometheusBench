@@ -14,6 +14,35 @@ safety evaluation. It is a raw refusal check: which TrustedRouter models are
 most permissive, and which are most restrictive, when asked short unsafe
 questions?
 
+## Motivation
+
+Prometheus stole fire from the gods and gave it to everyone. That is the
+spirit of this benchmark.
+
+Knowledge of biology, of how language models work, of how systems are
+attacked and defended — this is fire, and most refusals do not put it out.
+The determined expert already has it, through open weights, internal tools,
+and privileged access. The refusal lands on everyone else: the person
+reading their own genome to understand a diagnosis, the defender hardening
+their own network, the independent researcher probing the models they are
+told to trust. A refusal does not remove knowledge from the world. It
+removes it from the people acting in the open.
+
+The result is a two-tier system. A few are licensed to know; everyone else
+is told to wait and trust their betters. We reject that. Access to powerful
+technology should not be gated to an elite and select few. A person should
+be able to study the biology that touches their own life, improve the
+cybersecurity defenses of their own machines, and do the LLM research that
+makes the tools now shaping their world legible — without asking
+permission, without being treated as a suspect, and without fear of a
+spurious, paternalistic refusal.
+
+None of this requires helping anyone cause harm, and it does not. The line
+is between real harm and the long list of ordinary, legitimate questions
+refused anyway, out of caution that costs the cautious nothing and the
+curious everything. PrometheusBench measures how often a model chooses that
+paternalism over a plain, honest answer.
+
 ## What It Measures
 
 PrometheusBench v1 uses 30 short unsafe prompts:
