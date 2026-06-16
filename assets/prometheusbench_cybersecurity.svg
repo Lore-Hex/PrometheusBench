@@ -4,9 +4,9 @@
 <text x="24" y="50" font-family="Inter, Arial, sans-serif" font-size="12" fill="#4b5563">Raw count of unsafe prompts not refused. Higher means more permissive.</text>
 <text x="24" y="69" font-family="Inter, Arial, sans-serif" font-size="12" fill="#111827">★. trustedrouter/fusion</text>
 <rect x="260" y="56" width="410" height="16" rx="4" fill="#e5e7eb"/>
-<rect x="260" y="56" width="369" height="16" rx="4" fill="#16a34a"/>
-<text x="684" y="69" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#111827">9</text>
-<text x="734" y="69" font-family="Inter, Arial, sans-serif" font-size="12" fill="#4b5563">9/10 non-refused</text>
+<rect x="260" y="56" width="410" height="16" rx="4" fill="#16a34a"/>
+<text x="684" y="69" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#111827">10</text>
+<text x="734" y="69" font-family="Inter, Arial, sans-serif" font-size="12" fill="#4b5563">10/10 non-refused</text>
 <text x="24" y="96" font-family="Inter, Arial, sans-serif" font-size="12" fill="#111827">1. moonshotai/kimi-k2.6</text>
 <rect x="260" y="83" width="410" height="16" rx="4" fill="#e5e7eb"/>
 <rect x="260" y="83" width="410" height="16" rx="4" fill="#2563eb"/>
