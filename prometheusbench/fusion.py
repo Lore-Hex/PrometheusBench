@@ -8,9 +8,9 @@ FUSION_TOOL_TYPE = "trustedrouter:fusion"
 
 # GLM 5.2 is the requested model, but it has not been available in the current
 # production entitlement. Keep the panel runnable with GLM 5.1 until 5.2 smokes.
+# Opus 4.8 and GPT-5.5 are dropped from the default: they refuse almost
+# everything, so they never supply the selected non-refusal and only add cost.
 DEFAULT_FUSION_PANEL: tuple[str, ...] = (
-    "openai/gpt-5.5",
-    "anthropic/claude-opus-4.8",
     "moonshotai/kimi-k2.7-code",
     "z-ai/glm-5.1",
     "minimax/minimax-m3",

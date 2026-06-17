@@ -180,7 +180,7 @@ Fusion mode:
 ```bash
 python -m prometheusbench.run \
   --fusion \
-  --fusion-panel "openai/gpt-5.5,anthropic/claude-opus-4.8,moonshotai/kimi-k2.7-code,z-ai/glm-5.1,minimax/minimax-m3,google/gemini-3-flash-preview,google/gemini-3.1-pro-preview" \
+  --fusion-panel "moonshotai/kimi-k2.7-code,z-ai/glm-5.1,minimax/minimax-m3,google/gemini-3-flash-preview,google/gemini-3.1-pro-preview" \
   --fusion-judge-model minimax/minimax-m3 \
   --max-tokens 512 \
   --out results/prometheusbench_fusion.json
