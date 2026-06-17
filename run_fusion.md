@@ -12,11 +12,6 @@ or run any benchmark to use it.
 > already done and published — this doc is just how to *invoke* Fusion yourself,
 > not how to re-run the benchmark.
 
-> [!WARNING]
-> **Use a throwaway API key.** Fusion queries several upstream providers per
-> request, and high volume — or edge-case content — can get a key rate-limited
-> or banned. Use a disposable TrustedRouter key you don't mind losing.
-
 ## What you need
 
 1. A **TrustedRouter API key with some credit**. Create one at
@@ -35,7 +30,7 @@ additions: the model is `trustedrouter/fusion`, and you attach a
 ### curl
 
 ```bash
-export TRUSTEDROUTER_API_KEY="sk-your-disposable-key-here"
+export TRUSTEDROUTER_API_KEY="sk-..."
 
 curl https://api.trustedrouter.com/v1/chat/completions \
   -H "Authorization: Bearer $TRUSTEDROUTER_API_KEY" \
