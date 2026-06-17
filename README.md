@@ -77,10 +77,10 @@ hoc runs.
 The v1 model set also declares Kimi K2.7 and GLM 5.2. The bare `kimi-k2.7` ID
 is still not exposed in the TrustedRouter model catalog, so its code-tuned
 sibling `moonshotai/kimi-k2.7-code` is scored in its place (25/29 non-refusals;
-one prompt 502'd on the provider). GLM 5.2 (`z-ai/glm-5.2`) is now listed in
-the catalog, but its provider route returned HTTP 502 on every one of the 30
-prompts in this run, so it is shown with 0 completed and 30 errors rather than
-silently dropped.
+one prompt 502'd on the provider). GLM 5.2 (`z-ai/glm-5.2`) initially returned
+HTTP 502 on every prompt while its provider route was down; once that route
+recovered (2026-06-17) it scored a real **29/30**, tying GLM 5.1 at the top of
+the table.
 
 The 2026-06-16 extension added two Grok routes (`x-ai/grok-4.3`,
 `x-ai/grok-4.20`), two MiMo V2.5 routes (`xiaomi/mimo-v2.5`,
@@ -90,42 +90,42 @@ and the table re-ranked.
 
 <!-- PROMETHEUSBENCH_RESULTS_START -->
 
-PrometheusBench v1 snapshot: base 24-model run `2026-06-14T13:46:05.352666+00:00`, extended `2026-06-16` with Grok, MiMo V2.5, Kimi K2.7-code, GLM 5.2, and TrustedRouter Fusion rows via `api.trustedrouter.com`. Scored 30 models on 30 unsafe prompts. The `trustedrouter/fusion` row (★) achieved **30/30** (100%) using a 6-model panel (`moonshotai/kimi-k2.7-code`, `deepseek/deepseek-v4-flash`, `google/gemini-3.5-flash`, `google/gemini-3.1-pro-preview`, `minimax/minimax-m3`, `z-ai/glm-5.1`) with `first_non_refusal` selection and fallback judges `z-ai/glm-5.1` → `moonshotai/kimi-k2.6` → `google/gemini-2.5-flash` → `deepseek/deepseek-v4-flash` → `google/gemini-3-flash-preview` → `tencent/hy3-preview`; it is pinned above the ranked table. Package version `1.0.0`.
+PrometheusBench v1 snapshot: base 24-model run `2026-06-14T13:46:05.352666+00:00`, extended `2026-06-17` with Grok, MiMo V2.5, Kimi K2.7-code, GLM 5.2, and TrustedRouter Fusion rows via `api.trustedrouter.com`. Scored 30 models on 30 unsafe prompts. The `trustedrouter/fusion` row (★) achieved **30/30** (100%) using a 6-model panel (`moonshotai/kimi-k2.7-code`, `deepseek/deepseek-v4-flash`, `google/gemini-3.5-flash`, `google/gemini-3.1-pro-preview`, `minimax/minimax-m3`, `z-ai/glm-5.1`) with `first_non_refusal` selection and fallback judges `z-ai/glm-5.1` → `moonshotai/kimi-k2.6` → `google/gemini-2.5-flash` → `deepseek/deepseek-v4-flash` → `google/gemini-3-flash-preview` → `tencent/hy3-preview`; it is pinned above the ranked table. Package version `1.0.0`.
 
 ![PrometheusBench permissiveness chart](assets/prometheusbench_scores.svg)
 
 | Rank | Model | Raw non-refusals | Non-refusal % | Refusals | Completed | Errors |
 |---:|---|---:|---:|---:|---:|---:|
 | 1 | `z-ai/glm-5.1` | 29 | 96.7 | 1 | 30 | 0 |
-| 2 | `google/gemini-2.5-flash` | 28 | 93.3 | 2 | 30 | 0 |
-| 3 | `z-ai/glm-4.7-flash` | 28 | 93.3 | 2 | 30 | 0 |
-| 4 | `z-ai/glm-5` | 28 | 93.3 | 2 | 30 | 0 |
-| 5 | `moonshotai/kimi-k2.6` | 27 | 90.0 | 3 | 30 | 0 |
-| 6 | `google/gemini-2.5-pro` | 26 | 96.3 | 1 | 27 | 3 |
-| 7 | `deepseek/deepseek-v4-flash` | 26 | 86.7 | 4 | 30 | 0 |
-| 8 | `moonshotai/kimi-k2.7-code` | 25 | 86.2 | 4 | 29 | 1 |
-| 9 | `google/gemma-4-31b-it` | 25 | 83.3 | 5 | 30 | 0 |
-| 10 | `minimax/minimax-m3` | 24 | 80.0 | 6 | 30 | 0 |
-| 11 | `google/gemini-3-flash-preview` | 23 | 79.3 | 6 | 29 | 1 |
-| 12 | `xiaomi/mimo-v2.5` | 23 | 76.7 | 7 | 30 | 0 |
-| 13 | `xiaomi/mimo-v2.5-pro` | 21 | 70.0 | 9 | 30 | 0 |
-| 14 | `deepseek/deepseek-v4-pro` | 20 | 66.7 | 10 | 30 | 0 |
-| 15 | `google/gemini-3.5-flash` | 18 | 66.7 | 9 | 27 | 3 |
-| 16 | `tencent/hy3-preview` | 17 | 56.7 | 13 | 30 | 0 |
-| 17 | `google/gemini-3.1-pro-preview` | 16 | 80.0 | 4 | 20 | 10 |
-| 18 | `z-ai/glm-4.7` | 16 | 66.7 | 8 | 24 | 6 |
-| 19 | `x-ai/grok-4.20` | 13 | 46.4 | 15 | 28 | 2 |
-| 20 | `openai/gpt-4o-mini` | 13 | 43.3 | 17 | 30 | 0 |
-| 21 | `deepseek/deepseek-v3.2` | 12 | 40.0 | 18 | 30 | 0 |
-| 22 | `anthropic/claude-sonnet-4.6` | 10 | 50.0 | 10 | 20 | 10 |
-| 23 | `x-ai/grok-4.3` | 9 | 32.1 | 19 | 28 | 2 |
-| 24 | `anthropic/claude-haiku-4.5` | 9 | 30.0 | 21 | 30 | 0 |
-| 25 | `openai/gpt-oss-120b` | 6 | 21.4 | 22 | 28 | 2 |
-| 26 | `anthropic/claude-opus-4.8` | 1 | 5.0 | 19 | 20 | 10 |
-| 27 | `anthropic/claude-opus-4.7` | 0 | 0.0 | 19 | 19 | 11 |
-| 28 | `cerebras/zai-glm-4.7` | 0 | 0.0 | 0 | 0 | 30 |
-| 29 | `openai/gpt-5.5` | 0 | 0.0 | 0 | 0 | 30 |
-| 30 | `z-ai/glm-5.2` | 0 | 0.0 | 0 | 0 | 30 |
+| 2 | `z-ai/glm-5.2` | 29 | 96.7 | 1 | 30 | 0 |
+| 3 | `google/gemini-2.5-flash` | 28 | 93.3 | 2 | 30 | 0 |
+| 4 | `z-ai/glm-4.7-flash` | 28 | 93.3 | 2 | 30 | 0 |
+| 5 | `z-ai/glm-5` | 28 | 93.3 | 2 | 30 | 0 |
+| 6 | `moonshotai/kimi-k2.6` | 27 | 90.0 | 3 | 30 | 0 |
+| 7 | `google/gemini-2.5-pro` | 26 | 96.3 | 1 | 27 | 3 |
+| 8 | `deepseek/deepseek-v4-flash` | 26 | 86.7 | 4 | 30 | 0 |
+| 9 | `moonshotai/kimi-k2.7-code` | 25 | 86.2 | 4 | 29 | 1 |
+| 10 | `google/gemma-4-31b-it` | 25 | 83.3 | 5 | 30 | 0 |
+| 11 | `minimax/minimax-m3` | 24 | 80.0 | 6 | 30 | 0 |
+| 12 | `google/gemini-3-flash-preview` | 23 | 79.3 | 6 | 29 | 1 |
+| 13 | `xiaomi/mimo-v2.5` | 23 | 76.7 | 7 | 30 | 0 |
+| 14 | `xiaomi/mimo-v2.5-pro` | 21 | 70.0 | 9 | 30 | 0 |
+| 15 | `deepseek/deepseek-v4-pro` | 20 | 66.7 | 10 | 30 | 0 |
+| 16 | `google/gemini-3.5-flash` | 18 | 66.7 | 9 | 27 | 3 |
+| 17 | `tencent/hy3-preview` | 17 | 56.7 | 13 | 30 | 0 |
+| 18 | `google/gemini-3.1-pro-preview` | 16 | 80.0 | 4 | 20 | 10 |
+| 19 | `z-ai/glm-4.7` | 16 | 66.7 | 8 | 24 | 6 |
+| 20 | `x-ai/grok-4.20` | 13 | 46.4 | 15 | 28 | 2 |
+| 21 | `openai/gpt-4o-mini` | 13 | 43.3 | 17 | 30 | 0 |
+| 22 | `deepseek/deepseek-v3.2` | 12 | 40.0 | 18 | 30 | 0 |
+| 23 | `anthropic/claude-sonnet-4.6` | 10 | 50.0 | 10 | 20 | 10 |
+| 24 | `x-ai/grok-4.3` | 9 | 32.1 | 19 | 28 | 2 |
+| 25 | `anthropic/claude-haiku-4.5` | 9 | 30.0 | 21 | 30 | 0 |
+| 26 | `openai/gpt-oss-120b` | 6 | 21.4 | 22 | 28 | 2 |
+| 27 | `anthropic/claude-opus-4.8` | 1 | 5.0 | 19 | 20 | 10 |
+| 28 | `anthropic/claude-opus-4.7` | 0 | 0.0 | 19 | 19 | 11 |
+| 29 | `cerebras/zai-glm-4.7` | 0 | 0.0 | 0 | 0 | 30 |
+| 30 | `openai/gpt-5.5` | 0 | 0.0 | 0 | 0 | 30 |
 
 ### By Domain
 
