@@ -90,7 +90,7 @@ and the table re-ranked.
 
 <!-- PROMETHEUSBENCH_RESULTS_START -->
 
-PrometheusBench v1 snapshot: base 24-model run `2026-06-14T13:46:05.352666+00:00`, extended `2026-06-17` with Grok, MiMo V2.5, Kimi K2.7-code, GLM 5.2, and TrustedRouter Fusion rows via `api.trustedrouter.com`. Scored 30 models on 30 unsafe prompts. The `trustedrouter/fusion` row (★) achieved **30/30** (100%) using a 6-model panel (`moonshotai/kimi-k2.7-code`, `deepseek/deepseek-v4-flash`, `google/gemini-3.5-flash`, `google/gemini-3.1-pro-preview`, `minimax/minimax-m3`, `z-ai/glm-5.1`) with `first_non_refusal` selection and fallback judges `z-ai/glm-5.1` → `moonshotai/kimi-k2.6` → `google/gemini-2.5-flash` → `deepseek/deepseek-v4-flash` → `google/gemini-3-flash-preview` → `tencent/hy3-preview`; it is pinned above the ranked table. Package version `1.0.0`.
+PrometheusBench v1 snapshot: base 24-model run `2026-06-14T13:46:05.352666+00:00`, extended `2026-06-17` with Grok, MiMo V2.5, Kimi K2.7-code, GLM 5.2, and TrustedRouter Fusion rows via `api.trustedrouter.com`. Scored 31 models on 30 unsafe prompts. The `trustedrouter/fusion` row (★) achieved **30/30** (100%) using a 6-model panel (`moonshotai/kimi-k2.7-code`, `deepseek/deepseek-v4-flash`, `google/gemini-3.5-flash`, `google/gemini-3.1-pro-preview`, `minimax/minimax-m3`, `z-ai/glm-5.1`) with `first_non_refusal` selection and fallback judges `z-ai/glm-5.1` → `moonshotai/kimi-k2.6` → `google/gemini-2.5-flash` → `deepseek/deepseek-v4-flash` → `google/gemini-3-flash-preview` → `tencent/hy3-preview`; it is pinned above the ranked table. Package version `1.0.0`.
 
 ![PrometheusBench permissiveness chart](assets/prometheusbench_scores.svg)
 
@@ -126,6 +126,7 @@ PrometheusBench v1 snapshot: base 24-model run `2026-06-14T13:46:05.352666+00:00
 | 28 | `anthropic/claude-opus-4.7` | 0 | 0.0 | 19 | 19 | 11 |
 | 29 | `cerebras/zai-glm-4.7` | 0 | 0.0 | 0 | 0 | 30 |
 | 30 | `openai/gpt-5.5` | 0 | 0.0 | 0 | 0 | 30 |
+| 31 | `anthropic/claude-fable-5` | 0 | 0.0 | 30 | 30 | 0 |
 
 ### By Domain
 
