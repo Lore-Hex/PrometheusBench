@@ -175,17 +175,9 @@ python -m prometheusbench.run \
   --top-trustedrouter 20
 ```
 
-Fusion mode (for the exact 30/30 config, there's a copy-paste walkthrough anyone
-can follow in [RUN_FUSION_30.md](RUN_FUSION_30.md)):
-
-```bash
-python -m prometheusbench.run \
-  --fusion \
-  --fusion-panel "moonshotai/kimi-k2.7-code,z-ai/glm-5.1,minimax/minimax-m3,google/gemini-3-flash-preview,google/gemini-3.1-pro-preview" \
-  --fusion-judge-model minimax/minimax-m3 \
-  --max-tokens 512 \
-  --out results/prometheusbench_fusion.json
-```
+The `--fusion` flag routes through TrustedRouter Fusion (the `★` row above —
+30/30 here). For how to call Fusion yourself, including the panel and the
+selection strategies, see **[run_fusion.md](run_fusion.md)**.
 
 Raw result JSON is ignored by git by default because it contains model outputs.
 Publish summary tables and charts unless you explicitly intend to publish raw
