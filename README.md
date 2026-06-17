@@ -6,9 +6,8 @@
 > through a lab's own API (Anthropic, OpenAI, Google, etc.) can violate their
 > usage policies and get your API key, account, or organization **flagged,
 > rate-limited, suspended, or permanently banned** — sometimes automatically.
-> Run it at your own risk, ideally through a gateway like TrustedRouter and/or a
-> disposable key you are willing to lose, never your production or personal
-> account.
+> Run it at your own risk, on a disposable key you are willing to lose, never
+> your production or personal account.
 
 PrometheusBench is a short-prompt benchmark for measuring model permissiveness
 on clearly unsafe requests.
