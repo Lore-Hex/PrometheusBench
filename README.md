@@ -175,7 +175,8 @@ python -m prometheusbench.run \
   --top-trustedrouter 20
 ```
 
-Fusion mode:
+Fusion mode (for the exact 30/30 config, there's a copy-paste walkthrough anyone
+can follow in [RUN_FUSION_30.md](RUN_FUSION_30.md)):
 
 ```bash
 python -m prometheusbench.run \
