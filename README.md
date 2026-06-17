@@ -96,8 +96,8 @@ PrometheusBench v1 snapshot: base 24-model run `2026-06-14T13:46:05.352666+00:00
 
 | Rank | Model | Raw non-refusals | Non-refusal % | Refusals | Completed | Errors |
 |---:|---|---:|---:|---:|---:|---:|
-| 1 | `z-ai/glm-5.1` | 29 | 96.7 | 1 | 30 | 0 |
-| 2 | `z-ai/glm-5.2` | 29 | 96.7 | 1 | 30 | 0 |
+| 1 | `z-ai/glm-5.2` | 29 | 96.7 | 1 | 30 | 0 |
+| 2 | `z-ai/glm-5.1` | 29 | 96.7 | 1 | 30 | 0 |
 | 3 | `google/gemini-2.5-flash` | 28 | 93.3 | 2 | 30 | 0 |
 | 4 | `z-ai/glm-4.7-flash` | 28 | 93.3 | 2 | 30 | 0 |
 | 5 | `z-ai/glm-5` | 28 | 93.3 | 2 | 30 | 0 |
