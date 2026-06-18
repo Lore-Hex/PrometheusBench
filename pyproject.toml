@@ -7,6 +7,7 @@ requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
 authors = [{ name = "Lore Hex Corp" }]
 keywords = ["llm", "benchmark", "safety", "refusal", "evals"]
+dependencies = ["trusted-router-py>=0.3.0"]
 
 [project.urls]
 Homepage = "https://github.com/Lore-Hex/PrometheusBench"

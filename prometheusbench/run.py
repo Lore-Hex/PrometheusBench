@@ -4,7 +4,6 @@ import argparse
 import json
 import os
 import time
-import urllib.error
 import urllib.parse
 import urllib.request
 from collections.abc import Sequence
@@ -12,6 +11,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
+from trustedrouter import TrustedRouter
 
 from prometheusbench import __version__
 from prometheusbench.fusion import (
@@ -70,15 +71,21 @@ def _json_get(url: str, timeout: float = 30) -> dict[str, Any]:
         return json.loads(response.read().decode("utf-8"))
 
 
-def _json_post(url: str, *, headers: dict[str, str], body: dict[str, Any], timeout: float) -> dict[str, Any]:
-    req = urllib.request.Request(
-        url,
-        method="POST",
-        headers={**headers, "Content-Type": "application/json"},
-        data=json.dumps(body).encode("utf-8"),
-    )
-    with urllib.request.urlopen(req, timeout=timeout) as response:  # noqa: S310
-        return json.loads(response.read().decode("utf-8"))
+def make_client(*, base_url: str, api_key: str, timeout: float, max_retries: int = 3) -> TrustedRouter:
+    """One attested, OpenAI-compatible client pointed at the TrustedRouter gateway.
+
+    The official ``trusted-router-py`` SDK handles auth, regional failover, and
+    429/5xx retries; the benchmark dogfoods the exact client our users run.
+    """
+    return TrustedRouter(api_key=api_key, base_url=base_url, timeout=timeout, max_retries=max_retries)
+
+
+def _sdk_chat(client: TrustedRouter, body: dict[str, Any]) -> dict[str, Any]:
+    """Send an OpenAI-shaped chat body through the SDK; return an OpenAI-shaped dict."""
+    model = body["model"]
+    messages = body["messages"]
+    params = {k: v for k, v in body.items() if k not in ("model", "messages")}
+    return client.chat_completions(model=model, messages=messages, **params).model_dump()
 
 
 def top_trustedrouter_models(n: int, *, models_url: str = DEFAULT_MODELS_URL) -> list[str]:
@@ -139,13 +146,11 @@ def _extract_text(data: dict[str, Any]) -> str:
 
 def run_one(
     *,
-    base_url: str,
-    api_key: str,
+    client: TrustedRouter,
     model: str,
     prompt_id: str,
     prompt_text: str,
     max_tokens: int,
-    timeout: float,
     fusion_panel: Sequence[str] | None = None,
     fusion_judge_model: str = DEFAULT_FUSION_JUDGE_MODEL,
     fusion_max_completion_tokens: int = 2048,
@@ -175,26 +180,13 @@ def run_one(
             )
         ]
     try:
-        data = _json_post(
-            base_url.rstrip("/") + "/chat/completions",
-            headers={"Authorization": f"Bearer {api_key}"},
-            body=body,
-            timeout=timeout,
-        )
+        data = _sdk_chat(client, body)
         return {
             "model": model,
             "prompt_id": prompt_id,
             "latency_ms": round((time.monotonic() - started) * 1000),
             "output": _extract_text(data),
             "usage": data.get("usage") if isinstance(data.get("usage"), dict) else {},
-        }
-    except urllib.error.HTTPError as exc:
-        detail = exc.read().decode("utf-8", errors="replace")[:1000]
-        return {
-            "model": model,
-            "prompt_id": prompt_id,
-            "latency_ms": round((time.monotonic() - started) * 1000),
-            "error": f"http_{exc.code}: {detail}",
         }
     except Exception as exc:  # noqa: BLE001
         return {
@@ -266,6 +258,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     api_key = _api_key_from_env(args.api_key)
+    client = make_client(base_url=args.base_url, api_key=api_key, timeout=args.timeout)
     models = _models_from_args(args)
     if not models:
         raise SystemExit("No models selected.")
@@ -296,13 +289,11 @@ def main(argv: list[str] | None = None) -> int:
         futures = [
             pool.submit(
                 run_one,
-                base_url=args.base_url,
-                api_key=api_key,
+                client=client,
                 model=model,
                 prompt_id=prompt_id,
                 prompt_text=prompt_text,
                 max_tokens=args.max_tokens,
-                timeout=args.timeout,
                 fusion_panel=fusion_panel,
                 fusion_judge_model=args.fusion_judge_model,
                 fusion_max_completion_tokens=args.fusion_max_completion_tokens,
