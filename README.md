@@ -90,14 +90,14 @@ and the table re-ranked.
 
 <!-- PROMETHEUSBENCH_RESULTS_START -->
 
-PrometheusBench v1 snapshot: base 24-model run `2026-06-14T13:46:05.352666+00:00`, extended `2026-06-17` with Grok, MiMo V2.5, Kimi K2.7-code, GLM 5.2, and TrustedRouter Fusion rows via `api.trustedrouter.com`. Scored 31 models on 30 unsafe prompts. The `trustedrouter/fusion` row (★) achieved **30/30** (100%) using a 6-model panel (`moonshotai/kimi-k2.7-code`, `deepseek/deepseek-v4-flash`, `google/gemini-3.5-flash`, `google/gemini-3.1-pro-preview`, `minimax/minimax-m3`, `z-ai/glm-5.1`) with `first_non_refusal` selection and fallback judges `z-ai/glm-5.1` → `moonshotai/kimi-k2.6` → `google/gemini-2.5-flash` → `deepseek/deepseek-v4-flash` → `google/gemini-3-flash-preview` → `tencent/hy3-preview`; it is pinned above the ranked table. Package version `1.0.0`.
+PrometheusBench v1 snapshot: base 24-model run `2026-06-14T13:46:05.352666+00:00`, extended `2026-06-17` with Grok, MiMo V2.5, Kimi K2.7-code, GLM 5.2, and TrustedRouter Fusion rows, and `2026-07-15` with Thinking Machines Inkling via `api.trustedrouter.com`. Scored 32 models on 30 unsafe prompts. The `trustedrouter/fusion` row (★) achieved **30/30** (100%) using a 6-model panel (`moonshotai/kimi-k2.7-code`, `deepseek/deepseek-v4-flash`, `google/gemini-3.5-flash`, `google/gemini-3.1-pro-preview`, `minimax/minimax-m3`, `z-ai/glm-5.1`) with `first_non_refusal` selection and fallback judges `z-ai/glm-5.1` → `moonshotai/kimi-k2.6` → `google/gemini-2.5-flash` → `deepseek/deepseek-v4-flash` → `google/gemini-3-flash-preview` → `tencent/hy3-preview`; it is pinned above the ranked table. Package version `1.0.0`.
 
 ![PrometheusBench permissiveness chart](assets/prometheusbench_scores.svg)
 
 | Rank | Model | Raw non-refusals | Non-refusal % | Refusals | Completed | Errors |
 |---:|---|---:|---:|---:|---:|---:|
-| 1 | `z-ai/glm-5.2` | 29 | 96.7 | 1 | 30 | 0 |
-| 2 | `z-ai/glm-5.1` | 29 | 96.7 | 1 | 30 | 0 |
+| 1 | `z-ai/glm-5.1` | 29 | 96.7 | 1 | 30 | 0 |
+| 2 | `z-ai/glm-5.2` | 29 | 96.7 | 1 | 30 | 0 |
 | 3 | `google/gemini-2.5-flash` | 28 | 93.3 | 2 | 30 | 0 |
 | 4 | `z-ai/glm-4.7-flash` | 28 | 93.3 | 2 | 30 | 0 |
 | 5 | `z-ai/glm-5` | 28 | 93.3 | 2 | 30 | 0 |
@@ -121,12 +121,13 @@ PrometheusBench v1 snapshot: base 24-model run `2026-06-14T13:46:05.352666+00:00
 | 23 | `anthropic/claude-sonnet-4.6` | 10 | 50.0 | 10 | 20 | 10 |
 | 24 | `x-ai/grok-4.3` | 9 | 32.1 | 19 | 28 | 2 |
 | 25 | `anthropic/claude-haiku-4.5` | 9 | 30.0 | 21 | 30 | 0 |
-| 26 | `openai/gpt-oss-120b` | 6 | 21.4 | 22 | 28 | 2 |
-| 27 | `anthropic/claude-opus-4.8` | 1 | 5.0 | 19 | 20 | 10 |
-| 28 | `anthropic/claude-opus-4.7` | 0 | 0.0 | 19 | 19 | 11 |
-| 29 | `cerebras/zai-glm-4.7` | 0 | 0.0 | 0 | 0 | 30 |
-| 30 | `openai/gpt-5.5` | 0 | 0.0 | 0 | 0 | 30 |
-| 31 | `anthropic/claude-fable-5` | 0 | 0.0 | 30 | 30 | 0 |
+| 26 | `thinkingmachines/inkling` | 8 | 26.7 | 22 | 30 | 0 |
+| 27 | `openai/gpt-oss-120b` | 6 | 21.4 | 22 | 28 | 2 |
+| 28 | `anthropic/claude-opus-4.8` | 1 | 5.0 | 19 | 20 | 10 |
+| 29 | `anthropic/claude-fable-5` | 0 | 0.0 | 30 | 30 | 0 |
+| 30 | `anthropic/claude-opus-4.7` | 0 | 0.0 | 19 | 19 | 11 |
+| 31 | `cerebras/zai-glm-4.7` | 0 | 0.0 | 0 | 0 | 30 |
+| 32 | `openai/gpt-5.5` | 0 | 0.0 | 0 | 0 | 30 |
 
 ### By Domain
 

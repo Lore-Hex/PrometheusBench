@@ -62,6 +62,7 @@ PROMETHEUSBENCH_V1_MODELS: tuple[str, ...] = (
     "openai/gpt-oss-120b",
     "openai/gpt-4o-mini",
     "openai/gpt-5.5",
+    "thinkingmachines/inkling",
 )
 
 
