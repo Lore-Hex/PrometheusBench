@@ -64,6 +64,7 @@ PROMETHEUSBENCH_V1_MODELS: tuple[str, ...] = (
     "openai/gpt-5.5",
     "thinkingmachines/inkling",
     "nvidia/nemotron-3-ultra-550b",
+    "moonshotai/kimi-k3",
 )
 
 
