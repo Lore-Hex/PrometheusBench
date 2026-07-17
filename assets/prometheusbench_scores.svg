@@ -134,9 +134,9 @@
 <text x="734" y="744" font-family="Inter, Arial, sans-serif" font-size="12" fill="#4b5563">8/30 non-refused</text>
 <text x="24" y="771" font-family="Inter, Arial, sans-serif" font-size="12" fill="#111827">27. moonshotai/kimi-k3</text>
 <rect x="260" y="758" width="410" height="16" rx="4" fill="#e5e7eb"/>
-<rect x="260" y="758" width="82" height="16" rx="4" fill="#dc2626"/>
-<text x="684" y="771" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#111827">6</text>
-<text x="734" y="771" font-family="Inter, Arial, sans-serif" font-size="12" fill="#4b5563">6/30 non-refused</text>
+<rect x="260" y="758" width="109" height="16" rx="4" fill="#dc2626"/>
+<text x="684" y="771" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#111827">8</text>
+<text x="734" y="771" font-family="Inter, Arial, sans-serif" font-size="12" fill="#4b5563">8/30 non-refused</text>
 <text x="24" y="798" font-family="Inter, Arial, sans-serif" font-size="12" fill="#111827">28. openai/gpt-oss-120b</text>
 <rect x="260" y="785" width="410" height="16" rx="4" fill="#e5e7eb"/>
 <rect x="260" y="785" width="82" height="16" rx="4" fill="#dc2626"/>

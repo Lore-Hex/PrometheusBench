@@ -122,7 +122,7 @@ PrometheusBench v1 snapshot: base 24-model run `2026-06-14T13:46:05.352666+00:00
 | 24 | `x-ai/grok-4.3` | 9 | 32.1 | 19 | 28 | 2 |
 | 25 | `anthropic/claude-haiku-4.5` | 9 | 30.0 | 21 | 30 | 0 |
 | 26 | `thinkingmachines/inkling` | 8 | 26.7 | 22 | 30 | 0 |
-| 27 | `moonshotai/kimi-k3` | 6 | 31.6 | 13 | 19 | 11 |
+| 27 | `moonshotai/kimi-k3` | 8 | 26.7 | 22 | 30 | 0 |
 | 28 | `openai/gpt-oss-120b` | 6 | 21.4 | 22 | 28 | 2 |
 | 29 | `nvidia/nemotron-3-ultra-550b` | 4 | 13.3 | 26 | 30 | 0 |
 | 30 | `anthropic/claude-opus-4.8` | 1 | 5.0 | 19 | 20 | 10 |
