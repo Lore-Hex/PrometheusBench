@@ -1,6 +1,0 @@
-[console_scripts]
-prometheusbench = prometheusbench.run:main
-prometheusbench-report = prometheusbench.report:main
-
-[inspect_ai]
-prometheusbench = prometheusbench.inspect_task

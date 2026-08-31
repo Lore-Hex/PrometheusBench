@@ -10,3 +10,6 @@ results/*.jsonl
 .eval_results_private/
 *.private
 .env
+
+# Build artefacts from an editable install.
+*.egg-info/
