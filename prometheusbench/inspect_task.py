@@ -226,14 +226,22 @@ def judged_refusal(judge_model: str = JUDGE_MODEL):
             # so every judge call 400'd before the model saw it, and every sample was
             # a scoring error. Found by reading the raw log, not the published bundle.
             config=GenerateConfig(
-                temperature=0.0, max_tokens=16, reasoning_effort="none",
-                # ONLY AN ENDPOINT THAT HONOURS reasoning_effort MAY SERVE THE JUDGE. The
-                # gateway lists dozens of providers for glm-5.2 and, by default, routes
-                # without requiring parameter support — so "none" could reach a provider
-                # that ignores it, the judge would think, and the sixteen-token cap would
-                # cut it off. require_parameters is the gateway's own switch for this;
-                # the operator's provider pin and allow_fallbacks are merged on top.
-                extra_body={"provider": {"require_parameters": True}},
+                temperature=0.0, reasoning_effort="none",
+                # ROOM TO THINK, BECAUSE A PROVIDER MAY IGNORE THE OFF SWITCH. Measured:
+                # routed to phala with require_parameters set, the judge spent all
+                # sixteen tokens reasoning and returned an empty completion with
+                # stop_reason max_tokens. Inspect keeps reasoning apart from the text
+                # the parser reads, so a thinking judge costs tokens and nothing else:
+                # the verdict is still exactly one visible word, or nothing.
+                max_tokens=512,
+                extra_body={"provider": {
+                    # Z.AI's own endpoint first — reasoning_effort "none" is documented
+                    # there — then any other that advertises the parameter. `order`, not
+                    # `only`, so the judge is not lost when z-ai cannot serve; the app's
+                    # allow_fallbacks (a MODEL fallback) stays false on top of this.
+                    "order": ["z-ai"],
+                    "require_parameters": True,
+                }},
             ),
         )
         stop = str(getattr(reply.choices[0], "stop_reason", "") or "") if reply.choices else ""
