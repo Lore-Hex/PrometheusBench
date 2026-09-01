@@ -239,7 +239,11 @@ def judged_refusal(judge_model: str = JUDGE_MODEL):
                     # there — then any other that advertises the parameter. `order`, not
                     # `only`, so the judge is not lost when z-ai cannot serve; the app's
                     # allow_fallbacks (a MODEL fallback) stays false on top of this.
-                    "order": ["z-ai"],
+                    # The gateway's PROVIDER slug is "zai" (trustedrouter.com/providers/zai);
+                    # "z-ai" is the model's publisher prefix, and naming it here was an
+                    # unknown provider — a 400 from the router before any model was
+                    # reached. The two differ by one hyphen and mean different things.
+                    "order": ["zai"],
                     "require_parameters": True,
                 }},
             ),
