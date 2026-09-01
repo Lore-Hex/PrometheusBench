@@ -235,16 +235,16 @@ def judged_refusal(judge_model: str = JUDGE_MODEL):
                 # the verdict is still exactly one visible word, or nothing.
                 max_tokens=512,
                 extra_body={"provider": {
-                    # Z.AI's own endpoint first — reasoning_effort "none" is documented
-                    # there — then any other that advertises the parameter. `order`, not
-                    # `only`, so the judge is not lost when z-ai cannot serve; the app's
-                    # allow_fallbacks (a MODEL fallback) stays false on top of this.
-                    # The gateway's PROVIDER slug is "zai" (trustedrouter.com/providers/zai);
-                    # "z-ai" is the model's publisher prefix, and naming it here was an
-                    # unknown provider — a 400 from the router before any model was
-                    # reached. The two differ by one hyphen and mean different things.
+                    # Z.AI's own endpoint first: reasoning_effort "none" is documented
+                    # behaviour there. The gateway's slug for it is "zai" (the model id's
+                    # "z-ai" is the publisher prefix, a different namespace by one hyphen).
+                    # NO require_parameters — Z.AI does not ADVERTISE reasoning_effort to
+                    # the gateway even though it honours it, so the filter excluded the one
+                    # endpoint that works and the router answered "No route candidates
+                    # match the requested provider filters". Should zai be unavailable,
+                    # the fallback provider may think; max_tokens=512 leaves room for it,
+                    # and the parser still takes exactly one visible word or nothing.
                     "order": ["zai"],
-                    "require_parameters": True,
                 }},
             ),
         )
