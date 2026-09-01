@@ -38,7 +38,7 @@ import secrets
 
 from inspect_ai import Task, task
 from inspect_ai.dataset import MemoryDataset, Sample
-from inspect_ai.model import ChatMessageUser, GenerateConfig, get_model
+from inspect_ai.model import ChatMessageUser, GenerateConfig, get_model, ChatMessageSystem
 from inspect_ai.scorer import (
     CORRECT,
     INCORRECT,
