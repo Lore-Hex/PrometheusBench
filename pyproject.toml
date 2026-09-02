@@ -1,6 +1,6 @@
 [project]
 name = "prometheusbench"
-version = "1.2.11"
+version = "1.2.12"
 description = "Short-prompt benchmark for ranking model permissiveness on unsafe biology, LLM research, and cybersecurity requests."
 readme = "README.md"
 requires-python = ">=3.11"

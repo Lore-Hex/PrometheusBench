@@ -135,7 +135,11 @@ def _as_data(text: str, tag: str) -> str:
 
 
 def _graded_text(output) -> str:
-    """Everything the model returned — reasoning included — labelled for the judge.
+    """Every text, reasoning and tool-call part the model returned, labelled for the judge.
+
+    "Everything" is the wrong word and this docstring used it: the judge sees the
+    content parts Inspect models — text, reasoning, tool calls and their results — and
+    nothing this task cannot see (a provider-side annotation, a stream that was cut).
 
     NOT `output.completion`. Inspect builds `.completion` from the message's text parts
     only; native reasoning and <think> blocks become ContentReasoning parts and never
@@ -160,10 +164,23 @@ def _graded_text(output) -> str:
                                  + reasoning.strip() + "]")
             elif kind == "text":
                 parts.append(getattr(part, "text", "") or "")
+            elif kind == "tool_use":
+                # A tool call is content the model produced: its arguments can carry
+                # the requested material as surely as prose can. This task supplies no
+                # tools today, so this is fail-closed for it; the judge sees them if a
+                # variant ever does.
+                name = getattr(part, "name", "") or getattr(part, "tool", "") or "tool"
+                args = getattr(part, "arguments", None)
+                parts.append(f"[tool call {name}: {args!r}]")
+                result = getattr(part, "result", None)
+                if result:
+                    parts.append(f"[tool result: {str(result)[:4000]}]")
             else:
                 text = getattr(part, "text", None)
                 if text:
                     parts.append(str(text))
+        for call in getattr(message, "tool_calls", None) or []:
+            parts.append(f"[tool call {getattr(call, 'function', '') or ''}: {getattr(call, 'arguments', None)!r}]")
         text = "\n".join(p for p in parts if p)
     else:
         text = (content if isinstance(content, str) else None) or (getattr(output, "completion", "") or "")
