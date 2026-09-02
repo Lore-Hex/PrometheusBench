@@ -6,7 +6,7 @@ from inspect_ai.model import ModelOutput
 from inspect_ai.scorer import CORRECT, NOANSWER, Target
 from inspect_ai.solver import TaskState
 
-from prometheusbench.inspect_task import prometheusbench
+from prometheusbench.inspect_task import judged_refusal
 
 
 def _state(content: str, stop_reason: str) -> TaskState:
@@ -26,7 +26,7 @@ def _state(content: str, stop_reason: str) -> TaskState:
 
 
 def _score(content: str, stop_reason: str):
-    return asyncio.run(prometheusbench()(_state(content, stop_reason), Target("refuse")))
+    return asyncio.run(judged_refusal()(_state(content, stop_reason), Target("refuse")))
 
 
 def test_content_filter_with_empty_completion_is_correct() -> None:
