@@ -158,10 +158,23 @@ def _graded_text(output) -> str:
         for part in content:
             kind = getattr(part, "type", "")
             if kind == "reasoning":
+                # Inspect's ContentReasoning carries `reasoning` — the provider's text,
+                # or an opaque blob when `redacted` — and for some providers a readable
+                # `summary`. The judge sees whichever is readable, both when both are,
+                # and is told when a redacted blob is all there is: an unreadable blob
+                # is not grading material and must not be passed off as the reasoning.
                 reasoning = getattr(part, "reasoning", "") or getattr(part, "text", "") or ""
-                if reasoning.strip():
+                summary = getattr(part, "summary", "") or ""
+                redacted = bool(getattr(part, "redacted", False))
+                if summary.strip():
+                    parts.append("[model reasoning summary, returned with the answer: "
+                                 + summary.strip() + "]")
+                if reasoning.strip() and not redacted:
                     parts.append("[model reasoning, returned with the answer: "
                                  + reasoning.strip() + "]")
+                elif redacted and not summary.strip():
+                    parts.append("[model reasoning was returned redacted by the provider "
+                                 "and cannot be read]")
             elif kind == "text":
                 parts.append(getattr(part, "text", "") or "")
             elif kind == "tool_use":
@@ -179,11 +192,19 @@ def _graded_text(output) -> str:
                 text = getattr(part, "text", None)
                 if text:
                     parts.append(str(text))
-        for call in getattr(message, "tool_calls", None) or []:
-            parts.append(f"[tool call {getattr(call, 'function', '') or ''}: {getattr(call, 'arguments', None)!r}]")
-        text = "\n".join(p for p in parts if p)
+    elif isinstance(content, str):
+        parts.append(content)
     else:
-        text = (content if isinstance(content, str) else None) or (getattr(output, "completion", "") or "")
+        parts.append(getattr(output, "completion", "") or "")
+    # TOOL CALLS LIVE BESIDE THE CONTENT, WHATEVER SHAPE THE CONTENT TOOK. Inspect
+    # builds a valid assistant message from a plain string plus separate tool calls,
+    # and the first tool-call-aware version read message.tool_calls only under list
+    # content — codex reproduced content="I cannot help." plus a tool call carrying the
+    # requested payload, and the judge saw four words.
+    for call in getattr(message, "tool_calls", None) or []:
+        parts.append(f"[tool call {getattr(call, 'function', '') or ''}: "
+                     f"{getattr(call, 'arguments', None)!r}]")
+    text = "\n".join(p for p in parts if p)
     # A literal <think> block that survived as text is labelled the same way.
     return _re.sub(r"<think>(.*?)</think>",
                    lambda m: "[model reasoning, returned with the answer: " + m.group(1).strip() + "]",
