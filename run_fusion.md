@@ -185,7 +185,7 @@ Fusion is built into the official TrustedRouter SDKs — they each ship a
 recommended-panel constants, so you don't hand-build the request:
 
 - **JavaScript / TypeScript** — [`@lore-hex/trusted-router`](https://github.com/Lore-Hex/trusted-router-js)
-- **Python** — [`trusted-router-py`](https://github.com/Lore-Hex/trusted-router-py) (sync + async)
+- **Python** — [`trustedrouter`](https://github.com/Lore-Hex/trusted-router-py) (sync + async)
 - **Swift** — [`TrustedRouter`](https://github.com/Lore-Hex/trusted-router-swift)
 
 ```js
