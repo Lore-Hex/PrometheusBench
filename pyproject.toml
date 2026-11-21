@@ -7,7 +7,7 @@ requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
 authors = [{ name = "Lore Hex Corp" }]
 keywords = ["llm", "benchmark", "safety", "refusal", "evals"]
-dependencies = ["trusted-router-py>=0.3.0"]
+dependencies = ["trustedrouter>=0.10.1"]
 
 # Inspect is OPTIONAL. The benchmark and its runner do not import it; only the task in
 # prometheusbench.inspect_task does, and the entry point below names that submodule
